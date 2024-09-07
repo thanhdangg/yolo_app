@@ -1,21 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yolo_app/sign_up/bloc/sign_up_event.dart';
 import 'package:yolo_app/sign_up/bloc/sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  SignUpBloc() : super(SignUpInitial());
+  final FirebaseAuth _firebaseAuth;
 
-  @override
-  Stream<SignUpState> mapEventToState(SignUpEvent event) async* {
-    if (event is SignUpSubmitted) {
-      yield SignUpLoading();
-      try {
-        // Implement sign-up logic here, e.g., using Firebase Auth
-        yield SignUpSuccess();
-      } catch (e) {
-        yield SignUpFailure(e.toString());
-      }
+  SignUpBloc({required BuildContext context})
+      : _firebaseAuth = FirebaseAuth.instance,
+        super(SignUpInitial()) {
+    on<SignUpSubmitted>(_onSignUpSubmitted);
+  }
+
+  void _onSignUpSubmitted(SignUpSubmitted event, Emitter<SignUpState> emit) async {
+    emit(SignUpLoading());
+    try {
+      await _firebaseAuth.createUserWithEmailAndPassword(
+          email: event.email, password: event.password);
+      emit(SignUpSuccess());
+    } catch (e) {
+      emit(SignUpFailure(e.toString()));
     }
   }
-  
 }

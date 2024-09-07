@@ -14,6 +14,14 @@ dependencies:
   flutter_bloc: ^8.1.6
   auto_route: ^9.2.2
   auto_route_generator: ^9.0.0
+  get_it: ^7.7.0
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.16.0
+  firebase_storage: ^11.6.0
+  image_picker: ^1.1.2
+  shared_preferences: ^2.3.2
+  path: ^1.9.0
+  firebase_database: ^10.4.0
 
 dev_dependencies:
   flutter_test:

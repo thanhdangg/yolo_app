@@ -1,4 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yolo_app/configs/app_router.gr.dart';
+import 'package:yolo_app/sign_up/bloc/sign_up_bloc.dart';
+import 'package:yolo_app/sign_up/bloc/sign_up_state.dart';
+import 'package:yolo_app/sign_up/widgets/sign_up_form.dart';
 
 class SignUpView extends StatefulWidget {
   @override
@@ -6,76 +12,29 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
-  final _formKey = GlobalKey<FormState>();
-  String email = '';
-  String password = '';
-  String confirmPassword = '';
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign Up'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  email = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  password = value!;
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Confirm Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please confirm your password';
-                  }
-                  if (value != password) {
-                    return 'Passwords do not match';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  confirmPassword = value!;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // Handle sign up logic here
-                  }
-                },
-                child: Text('Sign Up'),
-              ),
-            ],
+    return BlocProvider(
+      create: (context) => SignUpBloc(context: context),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Sign Up')),
+        body: BlocListener<SignUpBloc, SignUpState>(
+          listener: (context, state) {
+            if (state is SignUpSuccess) {
+              context.router.replace(const HomeRoute());
+            } else if (state is SignUpFailure) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.error)));
+            }
+          },
+          child: BlocBuilder<SignUpBloc, SignUpState>(
+            builder: (context, state) {
+              if (state is SignUpLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return SignUpForm();
+              }
+            },
           ),
         ),
       ),

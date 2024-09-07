@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "899771568734",
+    "firebase_url": "https://yolo-c6728-default-rtdb.firebaseio.com",
+    "project_id": "yolo-c6728",
+    "storage_bucket": "yolo-c6728.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:899771568734:android:3edb865de142c690a61acf",
+        "android_client_info": {
+          "package_name": "com.example.yolo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "899771568734-gdl5o3nhjpp8i9nu8a2nemcl6kc7r6u4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe4qBskwZnwdn_n56fLSHDySBIQreWW7s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "899771568734-gdl5o3nhjpp8i9nu8a2nemcl6kc7r6u4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "899771568734-tutltf5h80f27f9368ijf337s3k4ss2s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.yoloApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
