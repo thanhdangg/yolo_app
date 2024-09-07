@@ -21,7 +21,10 @@ class UploadingImage extends HomeState {}
 
 class ImageUploaded extends HomeState {
   final String imageUrl;
-
   ImageUploaded(this.imageUrl);
 
+}
+class ImageProgressed extends HomeState {
+  final String imageUrl;
+  ImageProgressed(this.imageUrl);
 }

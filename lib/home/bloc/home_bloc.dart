@@ -51,13 +51,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final downloadUrl = await snapshot.ref.getDownloadURL();
       emit(ImageUploaded(downloadUrl));
 
-      await _database.reference().child('uploads/dang').set({
+      await _database.reference().child('input/dang').set({
         'fileName': fileName,
         'url': downloadUrl,
       });
 
+      // _listenToOutputRef(emit);
+      final outputRef = _database.ref('output');
+      outputRef.onValue.listen((event) {
+        final dataSnapshot = event.snapshot;
+        final imageUrl =
+            dataSnapshot.child('processed_image_url').value as String?;
+        debugPrint('==================imageUrl: $imageUrl');
+        if (imageUrl != null) {
+          debugPrint('==================Emitting ImageProgressed state with URL: $imageUrl');
+          emit(ImageProgressed(imageUrl));
+        } else {
+          debugPrint('================ImageProgressed error');
+        }
+      });
     } catch (e) {
       emit(HomeFailure(e.toString()));
     }
+  }
+
+  void _listenToOutputRef(Emitter<HomeState> emit) {
+    final outputRef = _database.ref('output');
+
+    outputRef.onValue.listen((event) {
+      final dataSnapshot = event.snapshot;
+      final imageUrl =
+          dataSnapshot.child('processed_image_url').value as String?;
+      debugPrint('==================imageUrl: $imageUrl');
+      if (imageUrl != null) {
+        debugPrint('==================on Emit ImageProgressed');
+        emit(ImageProgressed(imageUrl));
+      } else {
+        debugPrint('==================ImageProgressed error');
+      }
+    });
   }
 }

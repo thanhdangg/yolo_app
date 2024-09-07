@@ -22,9 +22,17 @@ class HomeView extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Image uploaded: ${state.imageUrl}')),
               );
+            } else if (state is ImageProgressed) {
+              debugPrint(
+                  '==================imageUrl ImageProgressed on home view: ${state.imageUrl}');
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Image processed: ${state.imageUrl}')),
+              );
             }
           },
           builder: (context, state) {
+            debugPrint("==========state: " + state.toString());
             if (state is HomeInitial) {
               return Center(
                 child: Column(
@@ -82,6 +90,27 @@ class HomeView extends StatelessWidget {
                     const CircularProgressIndicator(),
                     const SizedBox(height: 16),
                     const Text('Server Processing...'),
+                  ],
+                ),
+              );
+            } else if (state is ImageProgressed) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.network(
+                      state.imageUrl,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'Try again',
+                      ),
+                    ),
                   ],
                 ),
               );
