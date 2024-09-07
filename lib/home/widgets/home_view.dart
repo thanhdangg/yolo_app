@@ -65,8 +65,9 @@ class HomeView extends StatelessWidget {
                 ),
               );
             } else if (state is UploadingImage) {
-              return const Center(child: 
-              Column(
+              return const Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(),
                   Text("Uploading Image..."),

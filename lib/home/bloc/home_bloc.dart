@@ -1,10 +1,9 @@
 import 'dart:io';
-
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yolo_app/home/bloc/home_event.dart';
 import 'package:yolo_app/home/bloc/home_state.dart';
 import 'package:path/path.dart' as path;
@@ -12,6 +11,8 @@ import 'package:path/path.dart' as path;
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ImagePicker _picker = ImagePicker();
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+
   // late String email;
 
   final BuildContext context;
@@ -49,7 +50,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
       emit(ImageUploaded(downloadUrl));
-      
+
+      await _database.reference().child('uploads/dang').set({
+        'fileName': fileName,
+        'url': downloadUrl,
+      });
+
     } catch (e) {
       emit(HomeFailure(e.toString()));
     }
