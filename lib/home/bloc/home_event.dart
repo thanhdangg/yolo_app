@@ -10,6 +10,7 @@ class UploadImage extends HomeEvent {
   final File image;
   UploadImage(this.image);  
 }
+class ResetState extends HomeEvent {}
 
 
 

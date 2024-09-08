@@ -23,6 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc({required this.context}) : super(HomeState.initial()) {
     on<ChooseImage>(_onChooseImage);
     on<UploadImage>(_onUploadImage);
+    on<ResetState>(_onResetState);
   }
   // Future<void> loadEmail() async {
   //   final prefs = await SharedPreferences.getInstance();
@@ -67,12 +68,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final imageUrl =
             dataSnapshot.child('processed_image_url').value as String?;
         debugPrint('==================imageUrl: $imageUrl');
+        String? newUrl = imageUrl;
+        int i = 0;
+        do {
+          i+=1;
+          debugPrint('================i: $i');
+          final dataSnapshotNew = await outputRef.get();
+          newUrl = dataSnapshotNew.child('processed_image_url').value as String?;
+          debugPrint('================newUrl: $newUrl');
+          debugPrint('================imageUrl: $imageUrl');
+        } while (newUrl == imageUrl);
 
-        if (imageUrl != null) {
+        if (newUrl != null) {
           emit(
             state.copyWith(
               status: BlocStateStatus.imageProgressed,
-              imageUrl: imageUrl,
+              imageUrl: newUrl,
             ),
           );
         } else {
@@ -99,6 +110,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+  }
+
+  Future<void> _onResetState(
+      ResetState event, Emitter<HomeState> emit) async {
+    emit(HomeState.initial());
   }
 
   @override
