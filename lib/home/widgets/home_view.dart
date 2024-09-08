@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:yolo_app/home/bloc/home_bloc.dart';
-import 'package:yolo_app/home/bloc/home_event.dart';
-import 'package:yolo_app/home/bloc/home_state.dart';
+import 'package:yolo_app/utils/enums.dart';
 
 class HomeView extends StatelessWidget {
   @override
@@ -14,15 +13,15 @@ class HomeView extends StatelessWidget {
         appBar: AppBar(title: const Text('Home')),
         body: BlocConsumer<HomeBloc, HomeState>(
           listener: (context, state) {
-            if (state is HomeFailure) {
+            if (state.status == BlocStateStatus.failure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
+                SnackBar(content: Text(state.error ?? 'Error occurred')),
               );
-            } else if (state is ImageUploaded) {
+            } else if (state.status == BlocStateStatus.imageUploaded) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Image uploaded: ${state.imageUrl}')),
               );
-            } else if (state is ImageProgressed) {
+            } else if (state.status == BlocStateStatus.imageProgressed) {
               debugPrint(
                   '==================imageUrl ImageProgressed on home view: ${state.imageUrl}');
 
@@ -32,8 +31,8 @@ class HomeView extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            debugPrint("==========state: " + state.toString());
-            if (state is HomeInitial) {
+            debugPrint("==========state: " + state.status.toString());
+            if (state.status == BlocStateStatus.initial) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -57,22 +56,22 @@ class HomeView extends StatelessWidget {
                   ],
                 ),
               );
-            } else if (state is ImageChosen) {
+            } else if (state.status == BlocStateStatus.imageChosen) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.file(state.image),
+                    Image.file(state.image!),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<HomeBloc>().add(UploadImage(state.image));
+                        context.read<HomeBloc>().add(UploadImage(state.image!));
                       },
                       child: const Text('Upload Image'),
                     ),
                   ],
                 ),
               );
-            } else if (state is UploadingImage) {
+            } else if (state.status == BlocStateStatus.uploadingImage) {
               return const Center(
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -81,31 +80,31 @@ class HomeView extends StatelessWidget {
                   Text("Uploading Image..."),
                 ],
               ));
-            } else if (state is ImageUploaded) {
+            } else if (state.status == BlocStateStatus.imageUploaded) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.network(state.imageUrl),
+                    Image.network(state.imageUrl!),
                     const CircularProgressIndicator(),
                     const SizedBox(height: 16),
                     const Text('Server Processing...'),
                   ],
                 ),
               );
-            } else if (state is ImageProgressed) {
+            } else if (state.status == BlocStateStatus.imageProgressed) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.network(
-                      state.imageUrl,
+                      state.imageUrl!,
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextButton(
+                    ElevatedButton(
                       onPressed: () {},
                       child: const Text(
                         'Try again',
@@ -114,8 +113,49 @@ class HomeView extends StatelessWidget {
                   ],
                 ),
               );
-            } else {
-              return const Center(child: Text('Welcome Home!'));
+            } else if (state.status == BlocStateStatus.loading){
+              return const Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Loading..."),
+                ],
+              ));
+            }
+            else if (state.status == BlocStateStatus.success){
+              return const Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Success"),
+                ],
+              ));
+            }            
+            else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<HomeBloc>()
+                            .add(ChooseImage(ImageSource.camera));
+                      },
+                      child: const Text('Choose from Camera'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<HomeBloc>()
+                            .add(ChooseImage(ImageSource.gallery));
+                      },
+                      child: const Text('Choose from Gallery'),
+                    ),
+                  ],
+                ),
+              );
             }
           },
         ),

@@ -1,22 +1,26 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:yolo_app/home/bloc/home_event.dart';
-import 'package:yolo_app/home/bloc/home_state.dart';
 import 'package:path/path.dart' as path;
+import 'package:yolo_app/utils/enums.dart';
+
+part 'home_event.dart';
+part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ImagePicker _picker = ImagePicker();
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseDatabase _database = FirebaseDatabase.instance;
+  StreamSubscription<DatabaseEvent>? subscription;
 
   // late String email;
 
   final BuildContext context;
-  HomeBloc({required this.context}) : super(HomeInitial()) {
+  HomeBloc({required this.context}) : super(HomeState.initial()) {
     on<ChooseImage>(_onChooseImage);
     on<UploadImage>(_onUploadImage);
   }
@@ -29,18 +33,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final pickedFile = await _picker.pickImage(source: event.source);
       if (pickedFile != null) {
-        emit(ImageChosen(File(pickedFile.path)));
+        emit(HomeState.imageChosen(File(pickedFile.path)));
       } else {
-        emit(HomeFailure('No image selected'));
+        emit(HomeState.failure('No image selected'));
       }
     } catch (e) {
-      emit(HomeFailure(e.toString()));
+      emit(HomeState.failure(e.toString()));
     }
   }
 
   Future<void> _onUploadImage(
       UploadImage event, Emitter<HomeState> emit) async {
-    emit(UploadingImage());
+    emit(HomeState.imageUploading());
     try {
       final fileName = path.basename(event.image.path);
 
@@ -49,46 +53,57 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final uploadTask = ref.putFile(event.image);
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
-      emit(ImageUploaded(downloadUrl));
+      emit(HomeState.imageUploaded(downloadUrl));
 
       await _database.reference().child('input/dang').set({
         'fileName': fileName,
         'url': downloadUrl,
       });
 
-      // _listenToOutputRef(emit);
+      // Read data once using get()
       final outputRef = _database.ref('output');
-      outputRef.onValue.listen((event) {
-        final dataSnapshot = event.snapshot;
+      try {
+        final dataSnapshot = await outputRef.get();
         final imageUrl =
             dataSnapshot.child('processed_image_url').value as String?;
         debugPrint('==================imageUrl: $imageUrl');
+
         if (imageUrl != null) {
-          debugPrint('==================Emitting ImageProgressed state with URL: $imageUrl');
-          emit(ImageProgressed(imageUrl));
+          emit(
+            state.copyWith(
+              status: BlocStateStatus.imageProgressed,
+              imageUrl: imageUrl,
+            ),
+          );
         } else {
-          debugPrint('================ImageProgressed error');
+          debugPrint('================ImageProgressed imageUrl null');
+          emit(state.copyWith(
+            status: BlocStateStatus.failure,
+            error: 'Processed image URL is null',
+          ));
         }
-      });
+      } catch (e) {
+        debugPrint('==================on Error: $e');
+        emit(
+          state.copyWith(
+            status: BlocStateStatus.failure,
+            error: e.toString(),
+          ),
+        );
+      }
     } catch (e) {
-      emit(HomeFailure(e.toString()));
+      emit(
+        state.copyWith(
+          status: BlocStateStatus.failure,
+          error: e.toString(),
+        ),
+      );
     }
   }
 
-  void _listenToOutputRef(Emitter<HomeState> emit) {
-    final outputRef = _database.ref('output');
-
-    outputRef.onValue.listen((event) {
-      final dataSnapshot = event.snapshot;
-      final imageUrl =
-          dataSnapshot.child('processed_image_url').value as String?;
-      debugPrint('==================imageUrl: $imageUrl');
-      if (imageUrl != null) {
-        debugPrint('==================on Emit ImageProgressed');
-        emit(ImageProgressed(imageUrl));
-      } else {
-        debugPrint('==================ImageProgressed error');
-      }
-    });
+  @override
+  Future<void> close() {
+    subscription?.cancel();
+    return super.close();
   }
 }
