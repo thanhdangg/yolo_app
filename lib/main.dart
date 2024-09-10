@@ -5,7 +5,6 @@ import 'package:yolo_app/configs/app_locator.dart';
 import 'package:yolo_app/configs/app_router.dart';
 import 'package:yolo_app/home/bloc/home_bloc.dart';
 import 'package:yolo_app/sign_in/bloc/sign_in_bloc.dart';
-import 'package:yolo_app/sign_up/bloc/sign_up_bloc.dart';
 
 void main() async{
   setupLocator();

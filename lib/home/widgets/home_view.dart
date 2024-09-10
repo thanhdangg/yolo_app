@@ -5,6 +5,8 @@ import 'package:yolo_app/home/bloc/home_bloc.dart';
 import 'package:yolo_app/utils/enums.dart';
 
 class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -31,7 +33,7 @@ class HomeView extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            debugPrint("==========state: " + state.status.toString());
+            debugPrint("==========state: ${state.status}");
             if (state.status == BlocStateStatus.initial) {
               return Center(
                 child: Column(

@@ -7,6 +7,8 @@ import 'package:yolo_app/sign_up/bloc/sign_up_state.dart';
 import 'package:yolo_app/sign_up/widgets/sign_up_form.dart';
 
 class SignUpView extends StatefulWidget {
+  const SignUpView({super.key});
+
   @override
   _SignUpViewState createState() => _SignUpViewState();
 }

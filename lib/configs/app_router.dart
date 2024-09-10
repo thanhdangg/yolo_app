@@ -3,6 +3,7 @@ import 'package:yolo_app/configs/app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
 class AppRouter extends RootStackRouter  {
+  @override
   List<AutoRoute> get routes => [
     AutoRoute(page: SignInRoute.page, initial: true),
     AutoRoute(page: SignUpRoute.page),

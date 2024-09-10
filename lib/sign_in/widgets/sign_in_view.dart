@@ -8,6 +8,8 @@ import 'package:yolo_app/sign_in/bloc/sign_in_state.dart';
 import 'package:yolo_app/sign_in/widgets/sign_in_form.dart';
 
 class SignInView extends StatelessWidget {
+  const SignInView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

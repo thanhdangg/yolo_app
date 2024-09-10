@@ -8,6 +8,8 @@ import 'package:yolo_app/sign_in/bloc/sign_in_event.dart';
 class SignInForm extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  SignInForm({super.key});
   @override
   Widget build(BuildContext context) {
     return Form(

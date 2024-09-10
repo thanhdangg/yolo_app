@@ -27,7 +27,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
           '======================emailWithoutDomain: $emailWithoutDomain');
       emit(SignInSuccess());
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('userEmail', emailWithoutDomain as String);
+      await prefs.setString('userEmail', emailWithoutDomain);
     } catch (e) {
       emit(SignInFailure(e.toString()));
     }
