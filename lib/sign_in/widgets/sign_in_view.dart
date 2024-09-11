@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yolo_app/configs/app_router.gr.dart';
 import 'package:yolo_app/sign_in/bloc/sign_in_bloc.dart';
-import 'package:yolo_app/sign_in/bloc/sign_in_event.dart';
 import 'package:yolo_app/sign_in/bloc/sign_in_state.dart';
 import 'package:yolo_app/sign_in/widgets/sign_in_form.dart';
 

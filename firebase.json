@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"yolo-c6728","appId":"1:899771568734:android:3edb865de142c690a61acf","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"yolo-c6728","configurations":{"android":"1:899771568734:android:3edb865de142c690a61acf","ios":"1:899771568734:ios:be8795ec904fdaaca61acf","macos":"1:899771568734:ios:be8795ec904fdaaca61acf","web":"1:899771568734:web:8b573c07dfdc646ea61acf","windows":"1:899771568734:web:4f25245c09031b72a61acf"}}}}}}
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "yolo-c6728",
+                    "appId": "1:899771568734:android:3edb865de142c690a61acf",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "yolo-c6728",
+                    "configurations": {
+                        "android": "1:899771568734:android:3edb865de142c690a61acf",
+                        "ios": "1:899771568734:ios:be8795ec904fdaaca61acf",
+                        "macos": "1:899771568734:ios:be8795ec904fdaaca61acf",
+                        "web": "1:899771568734:web:8b573c07dfdc646ea61acf",
+                        "windows": "1:899771568734:web:4f25245c09031b72a61acf"
+                    }
+                }
+            }
+        }
+    }
+}

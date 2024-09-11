@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yolo_app/sign_up/bloc/sign_up_bloc.dart';
 import 'package:yolo_app/sign_up/bloc/sign_up_event.dart';
 
+// ignore: must_be_immutable
 class SignUpForm extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
