@@ -7,4 +7,5 @@ enum BlocStateStatus {
   uploadingImage,
   imageUploaded,
   imageProgressed,
+  imagesLoaded,
 }

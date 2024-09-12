@@ -28,6 +28,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   //   final prefs = await SharedPreferences.getInstance();
   //   email = prefs.getString('userEmail') ?? 'unknown';
   // }
+  // Future<void> _onLoadImages(
+  //     LoadImages event, Emitter<HomeState> emit) async {
+  //   try {
+  //     final ListResult result = await _storage.ref().listAll();
+  //     final List<String> imageUrls = await Future.wait(
+  //       result.items.map((Reference ref) => ref.getDownloadURL()).toList(),
+  //     );
+  //     emit(HomeState.imagesLoaded(imageUrls));
+  //   } catch (e) {
+  //     emit(HomeState.failure(e.toString()));
+  //   }
+  // }
+
   Future<void> _onChooseImage(
       ChooseImage event, Emitter<HomeState> emit) async {
     try {

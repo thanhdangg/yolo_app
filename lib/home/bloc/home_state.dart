@@ -5,12 +5,16 @@ class HomeState {
   final String? error;
   final File? image;
   final String? imageUrl;
+  final List<String>? imageUrls;
+
 
   HomeState({
     required this.status,
     this.error,
     this.image,
     this.imageUrl,
+    this.imageUrls,
+
   });
 
   factory HomeState.initial() => HomeState(
@@ -42,45 +46,24 @@ class HomeState {
         status: BlocStateStatus.imageProgressed,
         imageUrl: imageUrl,
       );
-
+  // factory HomeState.imagesLoaded(List<String> imageUrls) => HomeState(
+  //       status: BlocStateStatus.imagesLoaded,
+  //       imageUrls: imageUrls,
+  //     );  
 
   HomeState copyWith({
     BlocStateStatus? status,
     String? error,
     File? image,
     String? imageUrl,
+    // List<String>? imageUrls,
   }) {
     return HomeState(
       status: status ?? this.status,
       error: error ?? this.error,
       image: image ?? this.image,
       imageUrl: imageUrl ?? this.imageUrl,
+      // imageUrls: imageUrls ?? this.imageUrls, 
     );
   }
 }
-// class HomeInitial extends HomeState {}
-
-// class HomeLoading extends HomeState {}
-
-// class HomeSuccess extends HomeState {}
-
-// class HomeFailure extends HomeState {
-//   final String error;
-//   HomeFailure(this.error);
-// }
-// class ImageChosen extends HomeState {
-//   final File image;
-
-//   ImageChosen(this.image);
-// }
-// class UploadingImage extends HomeState {}
-
-// class ImageUploaded extends HomeState {
-//   final String imageUrl;
-//   ImageUploaded(this.imageUrl);
-
-// }
-// class ImageProgressed extends HomeState {
-//   final String imageUrl;
-//   ImageProgressed(this.imageUrl);
-// }

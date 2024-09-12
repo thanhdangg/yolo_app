@@ -10,6 +10,4 @@ class UploadImage extends HomeEvent {
   final File image;
   UploadImage(this.image);  
 }
-
-
-
+// class LoadImages extends HomeEvent {}
