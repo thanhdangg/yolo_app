@@ -6,9 +6,9 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 @RoutePage()
 class HistoryPage extends StatelessWidget {
-  final List<String> imageUrls;
+  final List<String>? imageUrls;
 
-  const HistoryPage({super.key, required this.imageUrls});
+  const HistoryPage({super.key, this.imageUrls});
 
    @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class HistoryPage extends StatelessWidget {
         appBar: AppBar(title: const Text('History')),
         body: BlocBuilder<HistoryBloc, HistoryState>(
           builder: (context, state) {
+            debugPrint("=====state: ${state.status}");
             if (state.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -33,6 +34,11 @@ class HistoryPage extends StatelessWidget {
                     controller: pageController,
                     itemCount: state.imageUrls.length,
                     itemBuilder: (context, index) {
+
+                      if (index < state.imageUrls.length - 1) {
+                        precacheImage(NetworkImage(state.imageUrls[index + 1]), context);
+                      }
+                      
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ClipRRect(

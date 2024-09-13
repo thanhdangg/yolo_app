@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yolo_app/history/history_page.dart';
 import 'package:yolo_app/home/bloc/home_bloc.dart';
 import 'package:yolo_app/utils/enums.dart';
 
@@ -54,6 +55,14 @@ class HomeView extends StatelessWidget {
                             .add(ChooseImage(ImageSource.gallery));
                       },
                       child: const Text('Choose from Gallery'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const HistoryPage(),)
+                        );
+                      },
+                      child: const Text('Go to History'),
                     ),
                   ],
                 ),

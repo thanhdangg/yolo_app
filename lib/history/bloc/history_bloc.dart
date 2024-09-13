@@ -18,10 +18,18 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     LoadHistoryImages events, Emitter<HistoryState> emit) async{
       emit(state.copyWith(status: BlocStateStatus.loading, isLoading: true));
         try {
-      final ListResult result = await _storage.ref().listAll();
+      final ListResult result = await _storage
+      .ref('output/test_load')
+      .listAll();
       final List<String> imageUrls = await Future.wait(
         result.items.map((Reference ref) => ref.getDownloadURL()).toList(),
       );
+      debugPrint("=====imageUrls: $imageUrls");
+
+      if (imageUrls.isEmpty) {
+        emit(state.copyWith(status: BlocStateStatus.failure, isLoading: false, error: "No images found"));
+        return;
+      }
       emit(state.copyWith(status: BlocStateStatus.imagesLoaded, imageUrls: imageUrls, isLoading: false));
     } catch (e) {
       emit(state.copyWith(status: BlocStateStatus.failure, error: e.toString()));
