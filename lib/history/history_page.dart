@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +15,7 @@ class HistoryPage extends StatelessWidget {
    @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HistoryBloc(context)..add(LoadHistoryImages()),
+      create: (context) => HistoryBloc(context)..add(LoadInitialPhotos()),
       child: Scaffold(
         appBar: AppBar(title: const Text('History')),
         body: BlocBuilder<HistoryBloc, HistoryState>(
@@ -27,51 +29,55 @@ class HistoryPage extends StatelessWidget {
               return Center(child: Text('Error: ${state.error}'));
             }
             final pageController = PageController();
-            return Column(
-              children: [
-                Expanded(
-                  child: PageView.builder(
-                    controller: pageController,
-                    itemCount: state.imageUrls.length,
-                    itemBuilder: (context, index) {
-
-                      if (index < state.imageUrls.length - 1) {
-                        precacheImage(NetworkImage(state.imageUrls[index + 1]), context);
-                      }
-                      
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16.0),
-                          child: Image.network(
-                            state.imageUrls[index],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
+            return NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  if (scrollNotification.metrics.pixels >=
+                      scrollNotification.metrics.maxScrollExtent * 0.8) {
+                    context.read<HistoryBloc>().add(LoadMorePhotos());
+                  }
+                  return false;
+                },
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: PageView.builder(
+                        controller: pageController,
+                        itemCount: state.imageUrls.length,
+                        onPageChanged: (index) {
+                          if (index >= state.imageUrls.length - 2) {
+                            context.read<HistoryBloc>().add(LoadMorePhotos());
+                          }
+                        },
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.0),
+                              child: Image.file(
+                                File(state.imageUrls[index]),
+                                fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
-                                color: Colors.grey,
-                                child: const Icon(
-                                  Icons.error,
-                                  color: Colors.white,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    color: Colors.grey,
+                                    child: const Icon(
+                                      Icons.error,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                SmoothPageIndicator(
-                  controller: pageController,
-                  count: state.imageUrls.length,
-                  effect: const WormEffect(),
-                ),
-              ],
-            );
+              );
           },
         ),
       ),

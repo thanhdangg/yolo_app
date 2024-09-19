@@ -82,7 +82,8 @@ class HomeView extends StatelessWidget {
                   ],
                 ),
               );
-            } else if (state.status == BlocStateStatus.imageChosen) {
+            } 
+            else if (state.status == BlocStateStatus.imageChosen) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

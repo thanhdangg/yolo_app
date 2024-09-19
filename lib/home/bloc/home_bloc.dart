@@ -57,15 +57,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onUploadImage(
       UploadImage event, Emitter<HomeState> emit) async {
-    emit(HomeState.imageUploading());
+    // emit(HomeState.imageUploading());
     try {
       final fileName = path.basename(event.image.path);
+      debugPrint('==================fileName: $fileName');
 
       final ref = _storage.ref().child('input/$fileName');
 
       final uploadTask = ref.putFile(event.image);
+      debugPrint('==================uploadTask: $uploadTask');
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
+      debugPrint('==================downloadUrl: $downloadUrl');
       emit(HomeState.imageUploaded(downloadUrl));
 
       await _database.ref().child('input/dang').set({
