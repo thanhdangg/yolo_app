@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -27,12 +28,34 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>yolo_app</title>
   <link rel="manifest" href="manifest.json">
 </head>
+
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-analytics.js"></script>
+  <script type="module">
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: 'AIzaSyCkiciuhOuR43T3GxWVrGmLH9XA1cqV_WY',
+      appId: '1:899771568734:web:8b573c07dfdc646ea61acf',
+      messagingSenderId: '899771568734',
+      projectId: 'yolo-c6728',
+      authDomain: 'yolo-c6728.firebaseapp.com',
+      databaseURL: 'https://yolo-c6728-default-rtdb.firebaseio.com',
+      storageBucket: 'yolo-c6728.appspot.com',
+      measurementId: 'G-L7P44FPZ5N',
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+
 </body>
+
 </html>

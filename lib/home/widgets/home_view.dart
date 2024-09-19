@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:yolo_app/history/history_page.dart';
-import 'package:yolo_app/history_gallert/history_gallery_page.dart';
+import 'package:yolo_app/history_gallery/history_gallery_page.dart';
 import 'package:yolo_app/home/bloc/home_bloc.dart';
 import 'package:yolo_app/utils/enums.dart';
 
@@ -73,7 +73,7 @@ class HomeView extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HistoryGalleryPage(),
+                            builder: (context) => const HistoryGalleryPage(),
                           ),
                         );
                       },

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:yolo_app/utils/enums.dart';
 
 part 'history_gallery_state.dart';
@@ -11,8 +14,7 @@ class HistoryGalleryBloc
     extends Bloc<HistoryGalleryEvent, HistoryGalleryState> {
   final BuildContext context;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  final List<String> _allPhotoUrls = [];
-
+  List<String> _allPhotoUrls = [];
 
   HistoryGalleryBloc({required this.context})
       : super(HistoryGalleryState.initial()) {
@@ -23,6 +25,8 @@ class HistoryGalleryBloc
       LoadInitialPhotos event, Emitter<HistoryGalleryState> emit) async {
     emit(state.copyWith(status: BlocStateStatus.loading, currentIndex: 0));
     try {
+      _allPhotoUrls = await _fetchAllPhotoUrls();
+      debugPrint('===All photo URLs: $_allPhotoUrls');
       final List<String> initialPhotoUrls = await _downloadPhotos(0, 2);
       emit(
         state.copyWith(
@@ -31,10 +35,11 @@ class HistoryGalleryBloc
         ),
       );
     } catch (e) {
-    emit(state.copyWith(status: BlocStateStatus.failure, error: e.toString()));
-
+      emit(
+          state.copyWith(status: BlocStateStatus.failure, error: e.toString()));
     }
   }
+
   Future<void> _onSwipeToNextPhoto(
       SwipeToNextPhoto event, Emitter<HistoryGalleryState> emit) async {
     final currentIndex = event.currentIndex;
@@ -44,13 +49,11 @@ class HistoryGalleryBloc
       try {
         final List<String> updatedPhotoUrls = List.from(state.photoUrls!);
 
-        // Preload the next photo
         if (nextIndex + 1 < _allPhotoUrls.length) {
           final nextPhotoUrl = await _downloadPhoto(nextIndex + 1);
           updatedPhotoUrls.add(nextPhotoUrl);
         }
 
-        // Delete the previous photo if necessary
         if (updatedPhotoUrls.length > 3) {
           final photoToDelete = updatedPhotoUrls.removeAt(0);
           await _deletePhoto(photoToDelete);
@@ -70,6 +73,14 @@ class HistoryGalleryBloc
     }
   }
 
+  Future<List<String>> _fetchAllPhotoUrls() async {
+    final ListResult result = await _storage.ref('output/test_load').listAll();
+    final List<String> photoUrls = await Future.wait(
+        result.items.map((Reference ref) => ref.getDownloadURL()).toList(),
+      );
+    return photoUrls;
+  }
+
   Future<List<String>> _downloadPhotos(int startIndex, int endIndex) async {
     final List<String> photoUrls = [];
     for (int i = startIndex; i <= endIndex; i++) {
@@ -78,6 +89,7 @@ class HistoryGalleryBloc
     }
     return photoUrls;
   }
+
   Future<String> _downloadPhoto(int index) async {
     final ref = _storage.refFromURL(_allPhotoUrls[index]);
     final downloadUrl = await ref.getDownloadURL();
@@ -86,6 +98,19 @@ class HistoryGalleryBloc
   }
 
   Future<void> _deletePhoto(String photoUrl) async {
-    // Implement deletion logic if necessary
+    try {
+      final directory = await getExternalStorageDirectory();
+      final filePath = '${directory!.path}/${photoUrl.split('/').last}';
+
+      final file = File(filePath);
+      if (await file.exists()) {
+        await file.delete();
+        debugPrint('===Photo deleted from gallery: $filePath');
+      } else {
+        debugPrint('===Photo not found in gallery: $filePath');
+      }
+    } catch (e) {
+      debugPrint('===Failed to delete photo: $photoUrl. Error: $e');
+    }
   }
 }

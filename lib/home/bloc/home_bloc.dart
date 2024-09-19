@@ -68,7 +68,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final downloadUrl = await snapshot.ref.getDownloadURL();
       emit(HomeState.imageUploaded(downloadUrl));
 
-      await _database.reference().child('input/dang').set({
+      await _database.ref().child('input/dang').set({
         'fileName': fileName,
         'url': downloadUrl,
       });
